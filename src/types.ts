@@ -11,17 +11,7 @@ export interface Mentor {
   };
 }
 
-export interface Course {
-  _id: string;
-  title: string;
-  description: string;
-  price: number;
-  duration: string;
-  thumbnail: string;
-  mentors: Mentor[];
-  curriculum: string[];
-  category: string;
-}
+
 
 export interface User {
   id: string;

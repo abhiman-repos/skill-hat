@@ -6,7 +6,7 @@ import { AuthProvider } from "@/src/context/AuthContext";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
 import { cn } from "@/lib/utils";
-import { DataProvider } from "@/src/context/DataContext";
+
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -29,11 +29,9 @@ export default function RootLayout({
         className={`${inter.className} min-h-screen bg-[#F9FAFB] text-[#111827]`}
       >
         <AuthProvider>
-          <DataProvider>
             <Navbar />
             <main className="pt-16">{children}</main>
             <Footer />
-          </DataProvider>
         </AuthProvider>
       </body>
     </html>

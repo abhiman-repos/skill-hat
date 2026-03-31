@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import AddInternship from "../../add/page";
 import { motion } from "motion/react";
 
+
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function EditInternshipPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -23,7 +26,7 @@ export default function EditInternshipPage() {
     const fetchInternship = async () => {
       try {
         const res = await fetch(
-          `https://skillhat-backend.onrender.com/upload/edit/${internshipId}/`,
+          `${API}/upload/edit/${internshipId}/`,
         );
 
         if (!res.ok) throw new Error("Failed to fetch internship");

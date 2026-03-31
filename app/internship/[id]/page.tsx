@@ -6,6 +6,9 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Clock, MapPin, ArrowLeft, Loader2 } from "lucide-react";
 
+
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function InternshipDetail() {
 
 
@@ -24,7 +27,7 @@ export default function InternshipDetail() {
         console.log("Fetching ID:", internshipId);
 
         const res = await fetch(
-          `https://skillhat-backend.onrender.com/upload/internship/${internshipId}/`,
+          `${API}/upload/internship/${internshipId}/`,
         );
 
         const text = await res.text(); // 👈 debug raw response

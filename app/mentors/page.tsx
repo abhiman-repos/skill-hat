@@ -10,6 +10,8 @@ import {
   Users,
 } from "lucide-react";
 
+ const API = process.env.NEXT_PUBLIC_APP_URL
+
 export default function Mentors() {
   const [mentors, setMentors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +22,7 @@ export default function Mentors() {
     const fetchMentors = async () => {
       try {
         const res = await fetch(
-          "https://skillhat-backend.onrender.com/api/mentors/list/"
+          `${API}/api/mentors/list/`
         );
 
         if (!res.ok) throw new Error("Failed to fetch mentors");
@@ -64,16 +66,7 @@ export default function Mentors() {
           </p>
 
           {/* SEARCH */}
-          <div className="max-w-xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search mentors..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border rounded-2xl pl-12 py-4 outline-none focus:ring-2 focus:ring-blue-500/20"
-            />
-          </div>
+
 
         </div>
       </section>

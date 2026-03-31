@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
 import {
@@ -8,11 +8,12 @@ import {
   Star,
   Clock,
   Users,
-  Award,
-  ChevronRight,
 } from "lucide-react";
+import { FaStar } from "react-icons/fa";
 import CountUp from "@/src/components/CountUp";
 import { useRouter } from "next/navigation";
+
+const API = process.env.NEXT_PUBLIC_APP_URL
 
 const stats = [
   { label: "Active internship", value: 150, suffix: "+", icon: BookOpen },
@@ -79,7 +80,7 @@ const MentorCard = ({ mentor }: any) => {
 
       <div className="flex justify-between text-sm mt-2">
         <span className="text-yellow-500">
-          ⭐ {mentor.rating || 0}
+         <FaStar className="text-yellow-500 text-xl" /> {mentor.rating || 0}
         </span>
 
         <span className="text-gray-500">
@@ -101,8 +102,8 @@ export default function Home() {
     const fetchData = async () => {
       try {
         const [iRes, mRes] = await Promise.all([
-          fetch("https://skillhat-backend.onrender.com/upload/internships/list/"),
-          fetch("https://skillhat-backend.onrender.com/api/mentors/list/"),
+          fetch(`${API}/upload/internships/list/`),
+          fetch(`${API}/api/mentors/list/`),
         ]);
 
         const internshipsData = await iRes.json();

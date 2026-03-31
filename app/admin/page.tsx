@@ -1,6 +1,4 @@
 "use client";
-
-import { useData } from "@/src/context/DataContext";
 import {
   MdWork,
   MdPeople,
@@ -13,22 +11,26 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+const API = process.env.NEXT_PUBLIC_APP_URL
+
 export default function Dashboard() {
-  // ✅ Context Data
-  const { enrollments = [], getTotalRevenue } = useData();
-  
-  // ✅ Backend States
+
   const [internships, setInternships] = useState<any[]>([]);
   const [mentors, setMentors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const totalRevenue = getTotalRevenue ? getTotalRevenue() : 0;
 
   // ✅ 1. Fetch Internships (Backend API)
   const fetchInternships = async () => {
     try {
-      const res = await fetch("https://skillhat-backend.onrender.com/upload/internships/list/");
-      if (!res.ok) throw new Error("Internships fetch failed");
+      const res = await fetch(
+        `${API}/upload/internships/list/`,
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch internships");
+      }
+
       const data = await res.json();
       setInternships(data);
     } catch (error) {
@@ -39,8 +41,14 @@ export default function Dashboard() {
   // ✅ 2. Fetch Mentors (Backend API)
   const fetchMentors = async () => {
     try {
-      const res = await fetch("https://skillhat-backend.onrender.com/api/mentors/list/");
-      if (!res.ok) throw new Error("Mentors fetch failed");
+      const res = await fetch(
+        `${API}/api/mentors/list/`,
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch mentors");
+      }
+
       const data = await res.json();
       setMentors(data);
     } catch (error) {
@@ -159,27 +167,23 @@ export default function Dashboard() {
            <h2 className="text-xs font-black text-gray-400 uppercase tracking-widest leading-none">Recent Enrollments</h2>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left">
-            <tbody className="divide-y divide-gray-50">
-              {enrollments.slice(0, 5).map((e, index) => (
-                <tr key={index} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-5 py-4">
-                    <p className="text-xs md:text-sm font-bold text-gray-800 leading-tight">{e.studentName}</p>
-                    <p className="text-[9px] md:text-[10px] text-gray-400 mt-0.5 truncate max-w-[150px] md:max-w-none">{e.studentEmail}</p>
-                  </td>
-                  <td className="px-5 py-4 text-[10px] text-gray-500 font-bold hidden md:table-cell">
-                    {new Date(e.enrolledDate).toLocaleDateString('en-IN')}
-                  </td>
-                  <td className="px-5 py-4 text-right">
-                    <span className={`px-2 py-1 rounded-md text-[8px] md:text-[9px] font-black uppercase tracking-tight shadow-sm border ${
-                      e.status === "Active" ? "bg-green-50 text-green-700 border-green-100" : "bg-gray-50 text-gray-400 border-gray-100"
-                    }`}>
-                      {e.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Student
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Course
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Date
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  Status
+                </th>
+              </tr>
+            </thead>
           </table>
           {enrollments.length === 0 && (
             <div className="p-10 text-center text-[10px] text-gray-300 font-bold uppercase tracking-widest">No Recent Data</div>

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import { Search, Clock, MapPin } from "lucide-react";
 
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function InternshipPage() {
   const [internships, setInternships] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ export default function InternshipPage() {
     const fetchInternships = async () => {
       try {
         const res = await fetch(
-          "https://skillhat-backend.onrender.com/upload/internships/list/"
+          `${API}/upload/internships/list/`
         );
 
         const data = await res.json();
@@ -40,21 +42,16 @@ export default function InternshipPage() {
   return (
     <div className="min-h-screen bg-gray-50/50">
 
-      {/* HERO */}
+
+      {/* GRID */}
       <section className="bg-white border-b pt-24 pb-16 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+      <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           Explore <span className="text-blue-600">Internships</span>
         </h1>
 
         <p className="text-gray-500 max-w-xl mx-auto mb-10">
           Discover real-world opportunities and kickstart your career 
         </p>
-
-        {/* SEARCH */}
-      </section>
-
-      {/* GRID */}
-      <section className="bg-gray-50/50 max-w-7xl mx-auto px-4 py-20">
         {loading ? (
           <div className="grid md:grid-cols-3 gap-8">
             {[1,2,3,4,5,6].map((i) => (
