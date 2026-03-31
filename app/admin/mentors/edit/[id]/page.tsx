@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import AddMentor from "../../add/page";
 import { motion } from "motion/react";
 
+
+const API = process.env.NEXT_PUBLIC_APP_URL
+
 export default function EditMentorPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -23,7 +26,7 @@ export default function EditMentorPage() {
     const fetchMentor = async () => {
       try {
         const res = await fetch(
-          `https://skillhat-backend.onrender.com/api/get_mentor/${mentorId}/`
+          `${API}/api/get_mentor/${mentorId}/`
         );
 
         if (!res.ok) throw new Error("Failed to fetch mentor");

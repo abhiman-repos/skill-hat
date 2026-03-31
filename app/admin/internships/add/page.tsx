@@ -30,6 +30,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function AddInternship({
   initialData,
   isEditMode,
@@ -94,21 +96,57 @@ export default function AddInternship({
       if (image) {
         const formDataImg = new FormData();
         formDataImg.append("image", image);
-        const res = await fetch("https://skillhat-backend.onrender.com/upload/internship/images/", {
-          method: "POST",
-          body: formDataImg,
-        });
+
+        const res = await fetch(
+          `${API}/upload/internship/images/`,
+          {
+            method: "POST",
+            body: formDataImg,
+          },
+        );
+
         if (!res.ok) throw new Error("Image upload failed");
         const data = await res.json();
         imageUrl = data.imageUrl;
         public_id = data.publicId;
       }
 
-      const finalData = { ...formData, imageUrl, public_id };
-      
-      const url = isEditMode 
-        ? `https://skillhat-backend.onrender.com/upload/update_internship/${internshipId}/`
-        : "https://skillhat-backend.onrender.com/upload/internship/";
+      // ✅ STEP 2: Prepare final data
+      const finalData = {
+        ...formData,
+        imageUrl,
+        public_id,
+      };
+
+      // ✅ STEP 3: CREATE
+      if (!isEditMode) {
+        const res = await fetch(`${API}/upload/internship/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(finalData),
+        });
+
+        if (!res.ok) throw new Error("Create failed");
+
+        toast.success("Internship created!");
+      }
+
+      // ✅ STEP 4: UPDATE
+      else {
+        const res = await fetch(
+          `${API}/upload/update_internship/${internshipId}/`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(finalData),
+          },
+        );
+
+        if (!res.ok) throw new Error("Update failed");
 
       const res = await fetch(url, {
         method: isEditMode ? "PUT" : "POST",

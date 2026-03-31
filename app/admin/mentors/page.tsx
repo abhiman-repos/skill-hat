@@ -14,6 +14,8 @@ import {
   AlertDialogTitle,
 } from "@/src/components/ui/alert-dialog";
 
+const API = process.env.NEXT_PUBLIC_APP_URL
+
 export default function Mentors() {
   const [mentors, setMentors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ export default function Mentors() {
 
   const fetchMentors = async () => {
     try {
-      const res = await fetch("https://skillhat-backend.onrender.com/api/mentors/list/", {
+      const res = await fetch(`${API}/api/mentors/list/`, {
         method: "GET",
       });
       const data = await res.json();
@@ -40,7 +42,7 @@ export default function Mentors() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await fetch(`https://skillhat-backend.onrender.com/api/delete_mentor/${deleteId}/`, {
+      await fetch(`${API}/api/delete_mentor/${deleteId}/`, {
         method: "DELETE",
       });
       setMentors((prev) => prev.filter((m) => m._id !== deleteId));

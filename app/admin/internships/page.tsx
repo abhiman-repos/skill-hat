@@ -21,6 +21,9 @@ import {
   AlertDialogTitle,
 } from "@/src/components/ui/alert-dialog";
 
+
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function InternshipsPage() {
   const [internships, setInternships] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +31,7 @@ export default function InternshipsPage() {
 
   const fetchInternships = async () => {
     try {
-      const res = await fetch("https://skillhat-backend.onrender.com/upload/internships/list/");
+      const res = await fetch(`${API}/upload/internships/list/`);
       const data = await res.json();
       setInternships(data);
     } catch (err) {
@@ -45,9 +48,14 @@ export default function InternshipsPage() {
   const handleDelete = async () => {
     if (!deleteId) return;
     try {
-      await fetch(`https://skillhat-backend.onrender.com/upload/delete_internship/${deleteId}/`, { 
-        method: "DELETE" 
-      });
+      await fetch(
+        `${API}/upload/delete_internship/${deleteId}/`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      // 🔥 remove from UI instantly
       setInternships((prev) => prev.filter((item) => item._id !== deleteId));
       setDeleteId(null);
     } catch (err) {

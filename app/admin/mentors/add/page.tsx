@@ -29,6 +29,8 @@ import {
 } from "@/src/components/ui/select";
 import { motion } from "framer-motion";
 
+const API = process.env.NEXT_PUBLIC_APP_URL;
+
 export default function AddMentor({
   initialData,
   isEditMode,
@@ -98,14 +100,43 @@ export default function AddMentor({
       });
       if (image) formDataToSend.append("image", image);
 
-      const url = isEditMode && initialData?._id
-        ? `https://skillhat-backend.onrender.com/api/update_mentor/${initialData._id}/`
-        : "https://skillhat-backend.onrender.com/api/mentor/";
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("expertise", formData.expertise);
+      formDataToSend.append("bio", formData.bio);
+      formDataToSend.append("experience", formData.experience);
+      formDataToSend.append("rating", String(formData.rating));
+      formDataToSend.append(
+        "totalStudents",
+        String(formData.totalStudents)
+      );
+      formDataToSend.append("status", formData.status);
 
-      const res = await fetch(url, {
-        method: isEditMode ? "PUT" : "POST",
-        body: formDataToSend,
-      });
+      // 📸 Image
+      if (image) {
+        formDataToSend.append("image", image);
+      }
+
+      let res;
+
+      // ✅ EDIT
+      if (isEditMode && initialData?._id) {
+        res = await fetch(
+          `${API}/api/update_mentor/${initialData._id}/`,
+          {
+            method: "PUT",
+            body: formDataToSend,
+          }
+        );
+      }
+
+      // ✅ CREATE
+      else {
+        res = await fetch(`${API}/api/mentor/`, {
+          method: "POST",
+          body: formDataToSend,
+        });
+      }
 
       if (!res.ok) throw new Error("Operation failed");
       router.push("/admin/mentors");
