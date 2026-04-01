@@ -97,66 +97,39 @@ export default function AddInternship({
         const formDataImg = new FormData();
         formDataImg.append("image", image);
 
-        const res = await fetch(
-          `${API}/upload/internship/images/`,
-          {
-            method: "POST",
-            body: formDataImg,
-          },
-        );
+        const res = await fetch(`${API}/upload/internship/images/`, {
+          method: "POST",
+          body: formDataImg,
+        });
 
         if (!res.ok) throw new Error("Image upload failed");
+
         const data = await res.json();
         imageUrl = data.imageUrl;
         public_id = data.publicId;
       }
 
-      // ✅ STEP 2: Prepare final data
-      const finalData = {
-        ...formData,
-        imageUrl,
-        public_id,
-      };
+      const finalData = { ...formData, imageUrl, public_id };
 
-      // ✅ STEP 3: CREATE
+      let res;
       if (!isEditMode) {
-        const res = await fetch(`${API}/upload/internship/`, {
+        res = await fetch(`${API}/upload/internship/`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(finalData),
         });
-
         if (!res.ok) throw new Error("Create failed");
-
         toast.success("Internship created!");
+      } else {
+        res = await fetch(`${API}/upload/update_internship/${internshipId}/`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(finalData),
+        });
+        if (!res.ok) throw new Error("Update failed");
+        toast.success("Internship updated!");
       }
 
-      // ✅ STEP 4: UPDATE
-      else {
-        const res = await fetch(
-          `${API}/upload/update_internship/${internshipId}/`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(finalData),
-          },
-        );
-
-        if (!res.ok) throw new Error("Update failed");
-
-      const res = await fetch(url, {
-        method: isEditMode ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(finalData),
-      });
-
-      if (!res.ok) throw new Error("Request failed");
-      
-      toast.success(isEditMode ? "Internship updated!" : "Internship published!");
       navigate.push("/admin/internships");
     } catch (error) {
       console.error(error);
@@ -185,7 +158,7 @@ export default function AddInternship({
               {isEditMode ? "Edit Opportunity" : "New Internship"}
             </h1>
             <p className="text-gray-400 font-medium mt-2">
-               Fill in the requirements and manage your listings.
+               Post a new internship with detailed requirements.
             </p>
           </motion.div>
         </div>
@@ -199,7 +172,7 @@ export default function AddInternship({
           {/* LEFT: IMAGE SECTION */}
           <div className="lg:col-span-4 space-y-4">
             <Label className="text-[10px] uppercase tracking-[0.2em] font-black text-gray-400 ml-1 flex items-center gap-2">
-              <MdImage className="text-indigo-500 text-sm" /> Banner Image
+              <MdImage className="text-indigo-500 text-base" /> Banner Image
             </Label>
             <div className="relative group overflow-hidden rounded-[32px] border-2 border-dashed border-gray-200 bg-white/50 hover:bg-white hover:border-indigo-200 transition-all cursor-pointer aspect-[4/5] flex items-center justify-center shadow-sm">
               <input
@@ -220,7 +193,7 @@ export default function AddInternship({
                 ) : (
                   <div className="text-center p-6 text-gray-400">
                     <MdCloudUpload className="text-4xl mx-auto mb-2 group-hover:scale-110 transition-transform text-indigo-400" />
-                    <p className="font-bold text-sm">Upload Banner</p>
+                    <p className="font-bold text-sm text-gray-600">Upload Banner</p>
                   </div>
                 )}
               </label>
@@ -231,7 +204,7 @@ export default function AddInternship({
                  <MdCheckCircle className="text-indigo-600 text-lg" /> Pro Tip
                </h4>
                <p className="text-[11px] leading-relaxed text-indigo-700 font-medium">
-                 Ensure the banner is clean and professional to attract more applicants.
+                 Use a high-quality banner image to make the posting look more professional.
                </p>
             </div>
           </div>
@@ -250,7 +223,7 @@ export default function AddInternship({
                   onChange={(e) => setFormData({...formData, title: e.target.value})}
                   placeholder="e.g. Full Stack Developer"
                   required
-                  className="rounded-2xl h-14 border-gray-200 bg-white/70 shadow-sm font-bold text-lg focus:ring-2 focus:ring-indigo-100"
+                  className="rounded-2xl h-14 border-gray-200 bg-white/70 shadow-sm font-bold text-lg focus:ring-2 focus:ring-indigo-100 transition-all"
                 />
               </div>
 
@@ -263,7 +236,7 @@ export default function AddInternship({
                   <Input
                     value={formData.company}
                     onChange={(e) => setFormData({...formData, company: e.target.value})}
-                    placeholder="Nirmatri"
+                    placeholder="Company Name"
                     required
                     className="rounded-2xl h-12 border-gray-200 bg-white/70 shadow-sm"
                   />
@@ -275,7 +248,7 @@ export default function AddInternship({
                   <Input
                     value={formData.location}
                     onChange={(e) => setFormData({...formData, location: e.target.value})}
-                    placeholder="Remote / Mumbai"
+                    placeholder="Remote / City"
                     required
                     className="rounded-2xl h-12 border-gray-200 bg-white/70 shadow-sm"
                   />
@@ -291,7 +264,7 @@ export default function AddInternship({
                   <Input
                     value={formData.duration}
                     onChange={(e) => setFormData({...formData, duration: e.target.value})}
-                    placeholder="3 Months"
+                    placeholder="e.g. 6 Months"
                     required
                     className="rounded-2xl h-12 border-gray-200 bg-white/70 shadow-sm"
                   />
@@ -303,7 +276,7 @@ export default function AddInternship({
                   <Input
                     value={formData.stipend}
                     onChange={(e) => setFormData({...formData, stipend: e.target.value})}
-                    placeholder="15000 / Unpaid"
+                    placeholder="Amount / Unpaid"
                     required
                     className="rounded-2xl h-12 border-gray-200 bg-white/70 shadow-sm"
                   />
@@ -318,7 +291,7 @@ export default function AddInternship({
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  placeholder="Describe the responsibilities..."
+                  placeholder="Describe the responsibilities and role details..."
                   rows={4}
                   required
                   className="rounded-2xl border-gray-200 bg-white/70 focus:bg-white resize-none shadow-sm font-medium p-4"
@@ -333,7 +306,7 @@ export default function AddInternship({
                 <Textarea
                   value={formData.requirements}
                   onChange={(e) => setFormData({...formData, requirements: e.target.value})}
-                  placeholder="What skills are you looking for?"
+                  placeholder="Skills, qualifications, and other requirements..."
                   rows={3}
                   required
                   className="rounded-2xl border-gray-200 bg-white/70 focus:bg-white resize-none shadow-sm font-medium p-4"
@@ -364,14 +337,14 @@ export default function AddInternship({
                   <Button
                     disabled={isSubmitting}
                     type="submit"
-                    className="flex-1 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-100 transition-all active:scale-95"
+                    className="flex-1 h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase tracking-widest text-[11px] shadow-xl shadow-indigo-100 transition-all active:scale-95"
                   >
                     {isSubmitting ? "Processing..." : isEditMode ? "Update Now" : "Publish Now"}
                   </Button>
                   <Button
                     type="button"
                     variant="outline"
-                    className="h-12 px-8 rounded-2xl border-gray-200 bg-white font-bold text-[10px] uppercase tracking-widest shadow-sm"
+                    className="h-12 px-8 rounded-2xl border-gray-200 bg-white font-bold text-[11px] uppercase tracking-widest shadow-sm"
                     onClick={() => navigate.push("/admin/internships")}
                   >
                     Cancel
