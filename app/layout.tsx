@@ -13,9 +13,13 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Skill-hatt | Professional Learning Platform",
+  title:   "Skill-hatt | Professional Learning Platform",
   description:
     "Empowering the next generation of professionals through expert-led courses and industry-recognized certifications.",
+  // Yahan icons add karein
+ icons: {
+  icon: '/skillhat (2).jpeg', 
+},
 };
 
 export default function RootLayout({

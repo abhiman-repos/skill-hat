@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { User, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
+import { User, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/src/context/AuthContext";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -14,9 +14,10 @@ export default function Navbar() {
 
   const pathname = usePathname();
 
-  const hideNavbarRouters = ["/admin", "/mentors", "/login", "/register"];
+  const hideNavbarRouters = ["/mentors", "/login", "/register" ,"/admin"];
 
-  const shouldHide = hideNavbarRouters.includes(pathname) || pathname.startsWith("/course/") || pathname.startsWith("/mentors/")  || pathname.startsWith("/admin/");
+  const shouldHide = hideNavbarRouters.includes(pathname) || pathname.startsWith("/course/") || pathname.startsWith("/mentors/") || pathname.startsWith("/admin/");
+
 
   if (shouldHide) return null;
 
@@ -52,14 +53,6 @@ export default function Navbar() {
             </Link>
             {user ? (
               <div className="flex items-center space-x-4">
-                {user.role === "admin" && (
-                  <Link
-                    href="/admin"
-                    className="p-2 text-gray-500 hover:text-blue-600 transition-colors"
-                  >
-                    <LayoutDashboard size={20} />
-                  </Link>
-                )}
                 <Link
                   href="/profile"
                   className="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100 hover:bg-gray-100 transition-colors"
@@ -111,7 +104,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -10 }}
             className="md:hidden bg-white border-b border-gray-100 px-4 py-4 space-y-4"
           >
-            <Link href="/Internships" className="block text-gray-600 font-medium">
+            <Link href="/internships" className="block text-gray-600 font-medium">
               Internship
             </Link>
             <Link href="/mentors" className="block text-gray-600 font-medium">
@@ -125,14 +118,6 @@ export default function Navbar() {
                 >
                   Profile
                 </Link>
-                {user.role === "admin" && (
-                  <Link
-                    href="/admin"
-                    className="block text-gray-600 font-medium"
-                  >
-                    Admin
-                  </Link>
-                )}
                 <button
                   onClick={logout}
                   className="block text-red-500 font-medium"

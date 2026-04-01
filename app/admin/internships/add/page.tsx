@@ -552,12 +552,13 @@ export default function AddInternship({
                   >
                     Cancel
                   </Button>
-                </div>
+                </div> 
               </div>
             </div>
           </div>
         </motion.form>
       </div>
     </div>
+   
   );
 }

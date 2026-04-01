@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { Award, BookOpen, User as UserIcon, Calendar, Linkedin, Download, ExternalLink } from "lucide-react";
 import { Course } from "@/src/types";
 import confetti from "canvas-confetti";
-import { MOCK_COURSES } from "@/src/mockData";
+
 import { useAuth } from "@/src/context/AuthContext";
 import Link from "next/link";
 
