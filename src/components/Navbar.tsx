@@ -17,6 +17,62 @@ import {
 import { useAuth } from "@/src/context/AuthContext";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import Fuse from "fuse.js";
+
+type RouteItem = {
+  path: string;
+  keywords: string[];
+};
+
+const routes: RouteItem[] = [
+  {
+    path: "/profile",
+    keywords: ["profile", "account", "my profile", "user"],
+  },
+  {
+    path: "/settings",
+    keywords: ["settings", "preferences", "config"],
+  },
+  {
+    path: "/mentors",
+    keywords: ["mentor", "mentors", "guide"],
+  },
+  {
+    path: "/contact",
+    keywords: ["contact", "contact us", "support", "help"],
+  },
+  {
+    path: "/internships",
+    keywords: ["internship", "internships", "jobs"],
+  },
+  {
+    path: "/",
+    keywords: ["dashboard", "home"],
+  },
+];
+
+const fuse = new Fuse(routes, {
+  keys: ["keywords"],
+  threshold: 0.3, // stricter = better accuracy
+  includeScore: true,
+});
+
+const normalize = (str: string) =>
+  str.toLowerCase().trim();
+
+const findRoute = (query: string): string | null => {
+  const q = normalize(query);
+
+  if (!q) return null;
+
+  const result = fuse.search(q);
+
+  if (result.length > 0 && result[0].score! < 0.4) {
+    return result[0].item.path;
+  }
+
+  return null;
+};
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -26,7 +82,16 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const hideNavbarRouters = ["/mentors", "/login", "/register", "/admin", "/auth/forgot-password", "/auth/reset-password", "/internships", "/internships/id"];
+  const hideNavbarRouters = [
+    "/mentors",
+    "/login",
+    "/register",
+    "/admin",
+    "/auth/forgot-password",
+    "/auth/reset-password",
+    "/internships",
+    "/internships/id",
+  ];
 
   const shouldHide =
     hideNavbarRouters.includes(pathname) ||
@@ -78,17 +143,47 @@ export default function Navbar() {
               placeholder="Search internships & mentors..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-11 pr-5 py-3.5 rounded-3xl bg-white border border-gray-200 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              className="w-full pl-8 pr-2 py-1.5 sm:py-2 rounded-lg bg-white border border-gray-300 text-xs sm:text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           </form>
 
-          {/* HAMBURGER BUTTON */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)}
-            className="shrink-0 text-gray-700 hover:text-gray-900 transition"
-          >
-            {isOpen ? <FiX size={28} /> : <FiMenu size={28} />}
-          </button>
+          {/* DESKTOP RIGHT */}
+          <div className="hidden md:flex items-center gap-6 shrink-0">
+          
+
+            {user ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full border"
+                >
+                  <User size={14} />
+                  <span className="text-sm">{user.name}</span>
+                </Link>
+
+                <button onClick={logout}>
+                  <LogOut
+                    size={20}
+                    className="text-gray-400 hover:text-red-500"
+                  />
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/register"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700"
+              >
+                Get Started
+              </Link>
+            )}
+          </div>
+
+          {/* MOBILE MENU BUTTON */}
+          <div className="md:hidden shrink-0">
+            <button onClick={() => setIsOpen(!isOpen)}>
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -101,83 +196,45 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -20 }}
             className="bg-white border-b shadow-lg md:shadow-xl md:absolute md:top-16 md:right-40 md:left-auto md:w-72 md:rounded-3xl md:overflow-hidden z-50"
           >
-            <div className="px-6 py-6 md:py-4 space-y-1">
-              
-              {/* Internship */}
-              <Link 
-                href="/internships" 
-                className="flex items-center gap-3 px-4 py-3.5 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] rounded-2xl font-medium transition-all duration-200"
-                onClick={closeMenu}
-              >
-                <FiBriefcase size={20} className="text-gray-500" />
-                Internship
-              </Link>
-              
-              {/* Mentors */}
-              <Link 
-                href="/mentors" 
-                className="flex items-center gap-3 px-4 py-3.5 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] rounded-2xl font-medium transition-all duration-200"
-                onClick={closeMenu}
-              >
-                <FiUsers size={20} className="text-gray-500" />
-                Mentors
-              </Link>
+            <Link
+              href="/internships"
+              className="block text-gray-600 font-medium"
+            >
+              Internship
+            </Link>
 
-              {user ? (
-                <>
-                  {/* Profile */}
-                  <Link 
-                    href="/profile" 
-                    className="flex items-center gap-3 px-4 py-3.5 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] rounded-2xl font-medium transition-all duration-200"
-                    onClick={closeMenu}
-                  >
-                    <FiUser size={20} className="text-gray-500" />
-                    Profile
-                  </Link>
+            <Link href="/mentors" className="block text-gray-600 font-medium">
+              Mentors
+            </Link>
 
-                  {/* Settings */}
-                  <Link 
-                    href="/settings" 
-                    className="flex items-center gap-3 px-4 py-3.5 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] rounded-2xl font-medium transition-all duration-200"
-                    onClick={closeMenu}
-                  >
-                    <FiSettings size={20} className="text-gray-500" />
-                    Settings
-                  </Link>
-
-                  {/* Logout */}
-                  <button 
-                    onClick={() => {
-                      logout();
-                      closeMenu();
-                    }}
-                    className="flex items-center gap-3 w-full text-left px-4 py-3.5 text-red-500 hover:bg-red-50 hover:scale-[1.02] rounded-2xl font-medium transition-all duration-200"
-                  >
-                    <FiLogOut size={20} className="text-red-500" />
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  {/* Login */}
-                  <Link 
-                    href="/login" 
-                    className="flex items-center gap-3 px-4 py-3.5 text-gray-700 hover:bg-gray-200 hover:scale-[1.02] rounded-2xl font-medium transition-all duration-200"
-                    onClick={closeMenu}
-                  >
-                    <FiLogIn size={20} className="text-gray-500" />
-                    Login
-                  </Link>
-                  <Link 
-                    href="/register"
-                    onClick={closeMenu}
-                    className="block mt-4 bg-blue-600 text-white px-6 py-3.5 rounded-3xl text-center font-semibold hover:bg-blue-700 transition"
-                  >
-                    Get Started
-                  </Link>
-                </>
-              )}
-            </div>
+            {user ? (
+              <>
+                <Link
+                  href="/profile"
+                  className="block text-gray-600 font-medium"
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={logout}
+                  className="block text-red-500 font-medium"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="block text-gray-600 font-medium">
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="block bg-blue-600 text-white px-4 py-2 rounded-lg text-center"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
