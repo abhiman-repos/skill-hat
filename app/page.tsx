@@ -23,7 +23,6 @@ import CountUp from "@/src/components/CountUp";
 import { useRouter } from "next/navigation";
 import { GraduationCap, FileText } from "lucide-react";
 import CircularText from "@/src/components/CircularText";
-import Image from "next/image";
 
 const API = process.env.NEXT_PUBLIC_APP_URL;
 
@@ -184,23 +183,23 @@ export default function Home() {
             <motion.img
               key={imgIndex}
               src={heroImages[imgIndex]}
-              initial={{ opacity: 0, scale: 1.1 }}
+              initial={{ opacity: 0, scale: 1 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
+              exit={{ opacity: 10 }}
+              transition={{ duration: 1, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full object-cover"
               alt="Background"
             />
           </AnimatePresence>
 
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-[#fcfcfc]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-[#fcfcfc]" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto space-y-6 px-4">
-          <div className="absolute left-[-200] top-30 -translate-y-1/2 hidden md:block">
+          <div className="absolute left-[-200] top-40 -translate-y-1/2 hidden md:block">
             <CircularText
               text="WELCOME*TO*SKILLHAT*"
-              spinDuration={30}
+              spinDuration={40}
               className="custom-class"
             />
           </div>
