@@ -133,8 +133,8 @@ const CircularText: React.FC<CircularTextProps> = ({
         <Image
           src="/logo.png"
           alt="center image"
-          width={120}
-          height={120}
+          width={140}
+          height={140}
           className="rounded-full object-contain"
           loading="eager"
         />
