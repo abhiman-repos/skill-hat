@@ -227,7 +227,7 @@ export default function InternshipDetail() {
                   },
                   {
                     icon: <IndianRupee size={24} />,
-                    label: "STIPEND",
+                    label: "PRICE",
                     value: `₹${internship.stipend}`,
                     type: "price",
                   },

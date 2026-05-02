@@ -18,7 +18,7 @@ export default function VerifyPage() {
   const [error, setError] = useState("");
 
   const handleVerify = async () => {
-    if (!certificateId) {
+    if (!certificateId.trim()) {
       setError("Please enter certificate ID");
       return;
     }
@@ -28,10 +28,7 @@ export default function VerifyPage() {
     setResult(null);
 
     try {
-      const res = await fetch(
-        `${API}/upload/verify/${certificateId}/`
-      );
-
+      const res = await fetch(`${API}/upload/verify/${certificateId.trim()}/`);
       const data = await res.json();
 
       if (!res.ok) {
@@ -47,11 +44,10 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex flex-col items-center justify-center px-4">
-
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex flex-col items-center justify-center px-4 py-8 md:py-12">
       {/* Header Branding */}
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-gray-900">SkillHat</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900">SkillHat</h1>
         <p className="text-gray-500 text-sm mt-1">
           Certificate Verification Portal
         </p>
@@ -60,104 +56,113 @@ export default function VerifyPage() {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-xl"
+        className="bg-white shadow-2xl rounded-3xl p-6 sm:p-8 w-full max-w-xl mx-auto"
       >
         {/* Title */}
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-semibold">Verify Certificate</h2>
-          <p className="text-gray-500 text-sm mt-1">
+          <h2 className="text-2xl md:text-3xl font-semibold text-gray-900">
+            Verify Certificate
+          </h2>
+          <p className="text-gray-500 text-sm mt-2 px-4">
             Enter a certificate ID to validate authenticity
           </p>
         </div>
 
-        {/* Input Section */}
-        <div className="flex gap-3">
+        {/* Input Section - Stacks on mobile */}
+        <div className="flex flex-col sm:flex-row gap-3">
           <input
             type="text"
             placeholder="e.g. CERT-7E13B5"
             value={certificateId}
             onChange={(e) => {
-              setCertificateId(e.target.value.toUpperCase());
+              setCertificateId(e.target.value.toUpperCase().trim());
               setError("");
             }}
-            className="flex-1 border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="flex-1 border border-gray-300 rounded-2xl px-5 py-4 
+                       outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
+                       text-base md:text-lg placeholder:text-gray-400"
+            disabled={loading}
           />
 
           <button
             onClick={handleVerify}
-            className="bg-blue-600 text-white px-6 rounded-xl flex items-center gap-2 hover:bg-blue-700 transition"
+            disabled={loading || !certificateId.trim()}
+            className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 
+                       disabled:bg-gray-400 transition-all
+                       text-white px-8 py-4 rounded-2xl flex items-center justify-center gap-2 
+                       font-medium text-base sm:min-w-[140px] active:scale-[0.97]"
           >
-            <FaSearch /> Verify
+            <FaSearch /> 
+            <span>{loading ? "Verifying..." : "Verify"}</span>
           </button>
         </div>
 
         {/* Loading */}
         {loading && (
-          <div className="mt-6 text-center text-gray-500 text-sm">
+          <div className="mt-8 text-center text-gray-500 flex items-center justify-center gap-2">
+            <div className="w-5 h-5 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin" />
             Verifying certificate...
           </div>
         )}
 
         {/* Error */}
         {error && (
-          <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-            <FaTimesCircle className="mx-auto text-red-500 mb-2" size={26} />
-            <p className="text-red-600 font-medium">{error}</p>
-          </div>
-        )}
-
-        {/* Success */}
-        {result && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-6 border border-green-200 rounded-xl p-5 bg-green-50"
+            className="mt-6 bg-red-50 border border-red-200 rounded-2xl p-5 text-center"
           >
-            {/* Verified Badge */}
-            <div className="flex items-center justify-center gap-2 text-green-600 mb-4">
-              <FaCheckCircle size={20} />
-              <span className="font-semibold text-sm">
-                Verified Certificate
-              </span>
+            <FaTimesCircle className="mx-auto text-red-500 mb-3" size={28} />
+            <p className="text-red-600 font-medium">{error}</p>
+          </motion.div>
+        )}
+
+        {/* Success Result */}
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 border border-green-200 rounded-2xl p-6 bg-green-50"
+          >
+            <div className="flex items-center justify-center gap-2 text-green-600 mb-5">
+              <FaCheckCircle size={24} />
+              <span className="font-semibold text-lg">Verified Certificate</span>
             </div>
 
-            {/* Certificate Info */}
-            <div className="space-y-3 text-sm text-gray-700">
-              <div className="flex justify-between">
+            <div className="space-y-4 text-[15px] text-gray-700">
+              <div className="flex justify-between py-1">
                 <span className="text-gray-500">Name</span>
-                <span className="font-medium">{result.user_name}</span>
+                <span className="font-medium text-right">{result.user_name}</span>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between py-1">
                 <span className="text-gray-500">Email</span>
-                <span className="font-medium">{result.user_email}</span>
+                <span className="font-medium text-right break-all">{result.user_email}</span>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between py-1">
                 <span className="text-gray-500">Internship</span>
-                <span className="font-medium">{result.internship_title}</span>
+                <span className="font-medium text-right">{result.internship_title}</span>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between py-1">
                 <span className="text-gray-500">Mentor</span>
-                <span className="font-medium">{result.mentor_name}</span>
+                <span className="font-medium text-right">{result.mentor_name}</span>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between py-1">
                 <span className="text-gray-500">Certificate ID</span>
-                <span className="font-mono">{result.certificate_id}</span>
+                <span className="font-mono font-medium">{result.certificate_id}</span>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between py-1">
                 <span className="text-gray-500">Issued</span>
-                <span>
-                  {new Date(result.issued_at).toLocaleDateString()}
-                </span>
+                <span>{new Date(result.issued_at).toLocaleDateString("en-IN")}</span>
               </div>
             </div>
 
             {/* Trust Footer */}
-            <div className="mt-5 border-t pt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+            <div className="mt-6 pt-5 border-t border-green-200 flex items-center justify-center gap-2 text-xs text-gray-500">
               <FaShieldAlt />
               Verified by SkillHat Secure Certificate System
             </div>
@@ -166,7 +171,7 @@ export default function VerifyPage() {
       </motion.div>
 
       {/* Footer */}
-      <p className="text-xs text-gray-400 mt-6 text-center">
+      <p className="text-xs text-gray-400 mt-8 text-center max-w-xs">
         This verification confirms the authenticity of certificates issued by SkillHat.
       </p>
     </div>
