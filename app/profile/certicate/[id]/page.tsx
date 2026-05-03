@@ -258,12 +258,12 @@ export default function CertificatePage() {
               <div className="text-right">
                 <p className="text-sm text-black-500">Verify at</p>
                 <a
-                  href={`https://www.skillhat.in/verify/${certificateData.certificate_id}`}
+                  href={`https://www.skillhat.in/verify`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-mono text-sm text-blue-600 underline hover:text-blue-800"
                 >
-                  {`www.skillhat.in/verify/${certificateData.certificate_id}`}
+                  {`www.skillhat.in/verify`}
                 </a>
                 <p className="text-sm text-black-500">Certificate ID</p>
                 <p className="font-mono blue-600">
